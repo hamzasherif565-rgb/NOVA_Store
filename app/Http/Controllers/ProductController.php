@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Database\Factories\CategoryFactory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 
 class ProductController extends Controller
@@ -29,32 +30,23 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $ViledData =$request->validate([
-            "name"=> "required |string|min:5 |max:100",
-            "description"=> "required |string ",
-            "price"=> "required|numeric",
-            "quantity"=>"required |integer",
-            "category_id"=>"required " ,
-            "image"=>" required|image |mimes:jpg,jpeg,png",
-
+        $ViledData = $request->validate([
+            "name" => "required|string|min:5|max:100",
+            "description" => "required|string",
+            "price" => "required|numeric",
+            "quantity" => "required|integer",
+            "category_id" => "required|exists:categories,id",
+            "image" => "required|image|mimes:jpg,jpeg,png",
         ]);
-        $Image =NULL;
-                
 
-        if ($request->hasFile("image")) {
-            $File = $request->file("image");
-            $Imagename = time() . "." . $File->getClientOriginalExtension();
-            $File->move(public_path("ProductsImages/"), $Imagename);
-            $Image = "ProductsImages/" . $Imagename;
-        }
+        $Image = $request->file("image")->store("ProductsImages", "public");
 
-        $ViledData["image"] =$Image;
+        $ViledData["image"] = $Image;
+
         Product::create($ViledData);
-        return redirect()->route("Products")->with("success","Add Product Succefully");
-        
 
-        
-        
+        return redirect()->route("Products")
+            ->with("success", "Add Product Successfully");
     }
 
 
@@ -81,28 +73,36 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        $Product = Product::findOrFail($id);
-        $ViledData =$request->validate([
-            "name"=> "required |string|min:5 |max:100",
-            "description"=> "required |string ",
-            "price"=> "required|numeric",
-            "quantity"=>"required |integer",
-            "category_id"=>"required " ,
-            "image"=>" nullable |image |mimes:jpg,jpeg,png",
+   public function update(Request $request, string $id)
+{
+    $Product = Product::findOrFail($id);
 
-        ]);
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('ProductsImages/'), $imageName);
-            $ViledData["image"] = 'ProductsImages/' . $imageName;
+    $ViledData = $request->validate([
+        "name" => "required|string|min:5|max:100",
+        "description" => "required|string",
+        "price" => "required|numeric",
+        "quantity" => "required|integer",
+        "category_id" => "required|exists:categories,id",
+        "image" => "nullable|image|mimes:jpg,jpeg,png",
+    ]);
+
+    if ($request->hasFile("image")) {
+
+        $NewImage = $request->file("image")->store("ProductsImages", "public");
+
+        // Delete old image if it exists in Storage
+        if ($Product->image) {
+            Storage::disk("public")->delete($Product->image);
         }
-        $Product->update($ViledData);
 
-     return redirect()->route("Products")->with("success","Update Product Succefully");
+        $ViledData["image"] = $NewImage;
     }
+
+    $Product->update($ViledData);
+
+    return redirect()->route("Products")
+        ->with("success", "Update Product Successfully");
+}
 
     /**
      * Remove the specified resource from storage.

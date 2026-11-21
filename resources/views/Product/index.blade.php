@@ -48,7 +48,7 @@
                                 <!-- Image -->
                                 <td class="py-4 px-6">
                                     @if ($Product['image'] != null)
-                                        <img src="{{ asset($Product['image']) }}" alt="Product Image" class="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-sm">
+                                        <img src="{{ asset('storage/' . $Product->image) }}" alt="{{ $Product->name }} " class="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-sm">
                                     @else
                                         <span class="text-xs text-slate-400 italic">No Found Image ...</span>
                                     @endif

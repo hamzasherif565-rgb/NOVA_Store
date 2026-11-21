@@ -26,7 +26,7 @@
                 <div class="flex items-center space-x-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
                     @if ($Product['image'] != null)
                         <div class="shrink-0">
-                            <img src="{{ asset($Product['image']) }}" alt="Product Image" class="w-20 h-20 object-cover rounded-lg border border-slate-200 shadow-sm">
+                            <img  src="{{ asset('storage/' . $Product->image) }}" alt="{{ $Product->name }}" class="w-20 h-20 object-cover rounded-lg border border-slate-200 shadow-sm">
                         </div>
                     @else
                         <div class="shrink-0 w-20 h-20 bg-slate-200 rounded-lg flex items-center justify-center text-xs text-slate-400 font-medium">

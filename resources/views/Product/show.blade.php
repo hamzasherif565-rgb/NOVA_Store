@@ -31,7 +31,7 @@
                 <!-- Product Image -->
                 <div class="flex justify-center md:justify-start">
                     @if (!empty($Product['image']))
-                        <img src="{{ asset( $Product['image']) }}" alt="Product Image" class="w-32 h-32 object-cover rounded-xl border border-slate-200 shadow-sm">
+                        <img src="{{ asset('storage/' . $Product->image) }}" alt="{{ $Product->name }}"class="w-32 h-32 object-cover rounded-xl border border-slate-200 shadow-sm">
                     @else
                         <div class="w-32 h-32 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 text-xs font-medium text-center p-2">
                             No Image Found
