@@ -53,5 +53,5 @@ Route::get('/contact', function () {
 })->name('contact');
 
 Route::get('/about', function () {
-    return view('about');
+    return view('About');
 })->name('About');
